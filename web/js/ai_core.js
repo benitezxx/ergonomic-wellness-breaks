@@ -1,67 +1,80 @@
 // web/js/ai_core.js
 
-// Variables de estado (Equivalente a tu contador y estado en Python)
 let contador = 0;
-let estado = "-";
+let estado = "arriba";
 
-/**
- * Función matemática para calcular el ángulo entre 3 puntos
- * Equivalente exacto a calcular_angulo(a, b, c) en sentadillasv2.py
- */
 export function calcularAngulo(a, b, c) {
     const radianes = Math.atan2(c.y - b.y, c.x - b.x) - Math.atan2(a.y - b.y, a.x - b.x);
     let angulo = Math.abs(radianes * 180.0 / Math.PI);
-    
-    if (angulo > 180.0) {
-        angulo = 360.0 - angulo;
-    }
+    if (angulo > 180.0) angulo = 360.0 - angulo;
     return angulo;
 }
 
-/**
- * Esta función recibe los landmarks de MediaPipe y aplica tu lógica
- */
-export function analizarSentadilla(poseLandmarks) {
-    // Si no hay detección, regresamos los valores actuales
-    if (!poseLandmarks) {
-        return { contador, estado, cuerpoCompleto: false };
+// Resetear el contador al cambiar de ejercicio
+export function resetearContador() {
+    contador = 0;
+    estado = "arriba";
+}
+
+export function analizarEjercicio(poseLandmarks, tipoEjercicio) {
+    if (!poseLandmarks) return { contador, estado, cuerpoCompleto: false };
+
+    let p1, p2, p3, umbralArriba, umbralAbajo;
+
+    if (tipoEjercicio === 'sentadillas') {
+        p1 = poseLandmarks[23]; // Cadera
+        p2 = poseLandmarks[25]; // Rodilla
+        p3 = poseLandmarks[27]; // Tobillo
+        umbralArriba = 160;
+        umbralAbajo = 90;
+    } else if (tipoEjercicio === 'lagartijas') {
+        p1 = poseLandmarks[11]; // Hombro
+        p2 = poseLandmarks[13]; // Codo
+        p3 = poseLandmarks[15]; // Muñeca
+        umbralArriba = 160;
+        umbralAbajo = 90; 
+    } else if (tipoEjercicio === 'estiramiento') {
+        p1 = poseLandmarks[11]; // Hombro
+        p2 = poseLandmarks[23]; // Cadera
+        p3 = poseLandmarks[27]; // Tobillo
+        umbralArriba = 160;
+        umbralAbajo = 90; // Doblarse por completo
     }
 
-    // Extraer los landmarks de la pierna izquierda (índices de MediaPipe JS)
-    // 23 = Cadera, 25 = Rodilla, 27 = Tobillo
-    const cadera = poseLandmarks[23];
-    const rodilla = poseLandmarks[25];
-    const tobillo = poseLandmarks[27];
+    if (p1.visibility > 0.6 && p2.visibility > 0.6 && p3.visibility > 0.6) {
+        const angulo = calcularAngulo(p1, p2, p3);
+        let repeticionCompletada = false;
+        let errorMovimiento = false; // El trigger para tu sonido
 
-    // Solo si está más del 60% seguro de ver los tres puntos, calcula el angulo
-    if (cadera.visibility > 0.6 && rodilla.visibility > 0.6 && tobillo.visibility > 0.6) {
-        
-        const angulo = calcularAngulo(cadera, rodilla, tobillo);
-
-        // Lógica de estados para sumar repeticiones
-        if (angulo > 160) {
+        // Lógica de estados y detección de errores
+        if (angulo > umbralArriba) {
+            // Si estaba a medias y subió, es un error
+            if (estado === "a_medias") {
+                errorMovimiento = true; 
+            }
             estado = "arriba";
         }
-        if (angulo < 90 && estado === "arriba") {
-            estado = "abajo";
-            contador += 1;
+        
+        // Si empezó a bajar pero no llega a la meta
+        if (angulo < (umbralArriba - 20) && angulo > umbralAbajo && estado === "arriba") {
+            estado = "a_medias"; 
         }
 
-        // Devolvemos la información lista para que la interfaz la muestre
-        return {
-            contador: contador,
-            estado: estado,
-            angulo: Math.round(angulo),
-            cuerpoCompleto: true,
-            coordenadasRodilla: rodilla // Útil si queremos dibujar el ángulo encima
-        };
+        // Si llegó a la meta correcta
+        if (angulo < umbralAbajo && (estado === "arriba" || estado === "a_medias")) {
+            estado = "abajo";
+            contador += 1;
+            repeticionCompletada = true;
+        }
 
-    } else {
-        // Equivalente a tu aviso 'CUERPO INCOMPLETO - ALEJATE'
-        return {
-            contador: contador,
-            estado: estado,
-            cuerpoCompleto: false
+        return { 
+            contador, estado, 
+            angulo: Math.round(angulo), 
+            cuerpoCompleto: true, 
+            repeticionCompletada,
+            errorMovimiento // Lo enviamos para reproducir el audio
         };
+    } else {
+        return { contador, estado, cuerpoCompleto: false };
     }
 }
