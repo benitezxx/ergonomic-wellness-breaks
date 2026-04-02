@@ -25,20 +25,20 @@ export function analizarEjercicio(poseLandmarks, tipoEjercicio) {
         p1 = poseLandmarks[23]; // Cadera
         p2 = poseLandmarks[25]; // Rodilla
         p3 = poseLandmarks[27]; // Tobillo
-        umbralArriba = 160;
-        umbralAbajo = 90;
+        umbralArriba = 150;
+        umbralAbajo = 85;
     } else if (tipoEjercicio === 'lagartijas') {
         p1 = poseLandmarks[11]; // Hombro
         p2 = poseLandmarks[13]; // Codo
         p3 = poseLandmarks[15]; // Muñeca
-        umbralArriba = 160;
-        umbralAbajo = 90; 
+        umbralArriba = 150;
+        umbralAbajo = 85; 
     } else if (tipoEjercicio === 'estiramiento') {
         p1 = poseLandmarks[11]; // Hombro
         p2 = poseLandmarks[23]; // Cadera
         p3 = poseLandmarks[27]; // Tobillo
-        umbralArriba = 160;
-        umbralAbajo = 90; // Doblarse por completo
+        umbralArriba = 150;
+        umbralAbajo = 80; // Doblarse por completo
     }
 
     if (p1.visibility > 0.6 && p2.visibility > 0.6 && p3.visibility > 0.6) {
