@@ -2,11 +2,15 @@
 
 import { analizarEjercicio, resetearContador } from './ai_core.js';
 import { iniciarCamara } from './camera.js';
+import { cargarModelosFaciales, registrarUsuario, verificarIdentidad } from './face_ai.js';
 
 const videoElement = document.getElementById('videoElement');
 const canvasElement = document.getElementById('canvasElement');
 const canvasCtx = canvasElement.getContext('2d');
-const btnEmpezar = document.getElementById('btnEmpezar');
+const panelLogin = document.getElementById('panelLogin');
+const inputNombre = document.getElementById('inputNombre');
+const btnRegistrar = document.getElementById('btnRegistrar');
+const btnIngresar = document.getElementById('btnIngresar');
 const mensajeEstado = document.getElementById('mensajeEstado');
 
 const rutina = [
@@ -127,6 +131,84 @@ pose.setOptions({
 });
 pose.onResults(onResults);
 
-btnEmpezar.addEventListener('click', () => {
-    iniciarCamara(videoElement, pose, btnEmpezar, mensajeEstado);
+// ==========================================
+// NUEVA LÓGICA DE LOGIN FACIAL
+// ==========================================
+
+// Bloquear botones hasta que la IA facial cargue
+btnRegistrar.disabled = true;
+btnIngresar.disabled = true;
+
+// Cargar modelos al abrir la página
+cargarModelosFaciales().then(() => {
+    mensajeEstado.innerText = "IA Facial Lista. Ingresa tu nombre.";
+    btnRegistrar.disabled = false;
+    btnIngresar.disabled = false;
+});
+
+// Función auxiliar para prender la cámara solo para leer la cara
+async function encenderCamaraTemporal() {
+    const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+    videoElement.srcObject = stream;
+    return new Promise(resolve => {
+        videoElement.onloadedmetadata = () => {
+            videoElement.play();
+            resolve(stream);
+        };
+    });
+}
+
+// EVENTO 1: Registrar Rostro
+btnRegistrar.addEventListener('click', async () => {
+    const nombre = inputNombre.value.trim();
+    if (!nombre) return alert("Escribe tu nombre primero");
+
+    mensajeEstado.innerText = "Mirando a la cámara para registro...";
+    btnRegistrar.disabled = true;
+    
+    const stream = await encenderCamaraTemporal();
+    
+    // Le damos 1 segundo a la cámara para que enfoque
+    setTimeout(async () => {
+        const resultado = await registrarUsuario(videoElement, nombre);
+        mensajeEstado.innerText = resultado.mensaje;
+        
+        // Apagamos la cámara temporal
+        stream.getTracks().forEach(track => track.stop());
+        btnRegistrar.disabled = false;
+    }, 1000);
+});
+
+// EVENTO 2: Iniciar Sesión (El que arranca la rutina)
+btnIngresar.addEventListener('click', async () => {
+    const nombre = inputNombre.value.trim();
+    if (!nombre) return alert("Escribe tu nombre primero");
+
+    mensajeEstado.innerText = "Verificando identidad...";
+    btnIngresar.disabled = true;
+    
+    const stream = await encenderCamaraTemporal();
+    
+    setTimeout(async () => {
+        const resultado = await verificarIdentidad(videoElement, nombre);
+        
+        // Si no te reconoce, apagamos cámara y mandamos error
+        if (!resultado.validado) {
+            mensajeEstado.innerText = resultado.mensaje;
+            stream.getTracks().forEach(track => track.stop());
+            btnIngresar.disabled = false;
+            return;
+        }
+
+        // ¡SI TE RECONOCE, ARRANCAMOS EL ENTRENAMIENTO!
+        mensajeEstado.innerText = resultado.mensaje + " ¡Iniciando Rutina!";
+        panelLogin.style.display = 'none'; // Ocultamos el login
+        
+        // Apagamos la cámara temporal para que MediaPipe la tome de forma limpia
+        stream.getTracks().forEach(track => track.stop());
+        
+        // Iniciamos tu lógica original de MediaPipe
+        iniciarCamara(videoElement, pose, btnIngresar, mensajeEstado);
+        
+    }, 1000);
 });

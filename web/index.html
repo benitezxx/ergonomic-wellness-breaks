@@ -10,14 +10,18 @@
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.min.js"></script>
 </head>
 <body>
     <div class="container">
         <h1>Contador de Sentadillas IA</h1>
         
-        <div class="controls">
-            <button id="btnEmpezar">Empezar Cámara</button>
-            <p id="mensajeEstado">Esperando para iniciar...</p>
+        <div class="controls" id="panelLogin">
+            <input type="text" id="inputNombre" placeholder="Tu nombre (ej. Diego)" style="padding: 10px; font-size: 16px; border-radius: 5px;">
+            <br><br>
+            <button id="btnRegistrar" style="background-color: #2196F3;">1. Registrar mi Rostro</button>
+            <button id="btnIngresar">2. Iniciar Sesión</button>
+            <p id="mensajeEstado">Cargando modelos de IA Facial...</p>
         </div>
 
         <div class="video-container">
