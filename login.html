@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Login - Active Break</title>
+  <link rel="stylesheet" href="login.css">
+</head>
+<body>
+  <div class="login-container">
+    
+    <!-- Panel izquierdo: acceso para usuarios -->
+    <div class="left-panel">
+      <h1>Corporate Active Break</h1>
+      <p>Colócate frente a la cámara</p>
+      
+      <div class="camera-box">
+        <div class="camera-placeholder">Detectando...</div>
+      </div>
+      
+      <button class="user-btn" onclick="loginUser()">
+        Continuar como Usuario
+      </button>
+    </div>
+    
+    <!-- Panel derecho: acceso para administradores -->
+    <div class="right-panel">
+      <h2>Administrador</h2>
+      
+      <input type="text" id="adminUser" placeholder="Usuario">
+      <input type="password" id="adminPass" placeholder="Contraseña">
+      
+      <button class="admin-btn" onclick="loginAdmin()">
+        Iniciar Sesión
+      </button>
+    </div>
+    
+  </div>
+  
+  <script src="login.js"></script>
+</body>
+</html>

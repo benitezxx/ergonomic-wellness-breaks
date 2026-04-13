@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  
+  <!-- Validación de rol: solo administradores pueden acceder -->
+  <script>
+    const role = localStorage.getItem("role");
+    if (role !== "admin") {
+      window.location.href = "login.html";
+    }
+  </script>
+  
+  <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <!-- Cabecera del panel de administración -->
+  <header class="admin-header">
+    <h1>Panel Administrador</h1>
+    <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+  </header>
+
+  <!-- Sección de estadísticas globales -->
+  <div class="stats-container">
+    <div class="stat-card">
+      <h3>Usuarios</h3>
+      <p id="totalUsers">0</p>
+    </div>
+    <div class="stat-card">
+      <h3>Puntos Totales</h3>
+      <p id="totalPoints">0</p>
+    </div>
+    <div class="stat-card">
+      <h3>Top Usuario</h3>
+      <p id="topUser">-</p>
+    </div>
+  </div>
+
+  <!-- Contenedor principal: formulario y lista -->
+  <div class="admin-container">
+    
+    <!-- Formulario para agregar nuevo ejercicio -->
+    <div class="form-card">
+      <h2>Agregar Ejercicio</h2>
+      <input id="points" placeholder="Puntos (ej: 10)">
+      <input id="name" placeholder="Nombre del ejercicio">
+      <input id="desc" placeholder="Descripción">
+      <input id="img" placeholder="URL o ruta de imagen">
+      <button class="add-btn" onclick="addExercise()">Agregar</button>
+    </div>
+    
+    <!-- Lista de ejercicios existentes -->
+    <div class="list-card">
+      <h2>Ejercicios</h2>
+      <div id="list" class="exercise-list"></div>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="admin.js"></script>
+  
+  <!-- Función de cierre de sesión -->
+  <script>
+    function logout() {
+      localStorage.clear();
+      window.location.href = "login.html";
+    }
+  </script>
+  
+</body>
+</html>
