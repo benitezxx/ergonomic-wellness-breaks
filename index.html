@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<script>
+const role = localStorage.getItem("role")
+
+if(role !== "user"){
+window.location.href = "login.html"
+}
+</script>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Corporate Active Break</title>
+
+<link rel="stylesheet" href="styles.css">
+
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
+
+</head>
+
+<body>
+
+<header class="header">
+<h1>Corporate Active Break</h1>
+<p>Sistema Inteligente de Pausas Activas</p>
+</header>
+
+<div class="layout">
+
+  <div id="userPoints">Puntos: 0</div>
+
+<div class="camera-container">
+<video class="input_video" autoplay muted playsinline></video>
+<canvas class="output_canvas"></canvas>
+
+<div id="gestureCursor"></div>
+<div id="countdown">3</div>
+
+<div class="exercise-overlay" id="exerciseOverlay">
+<h3 id="currentExercise">Ejercicio</h3>
+<p>Repeticiones</p>
+<span id="counter">0</span>
+
+<p>Tiempo</p>
+  <span id="timer">20</span>
+</div>
+</div>
+
+<div class="menu">
+<h2>Ejercicios</h2>
+<div class="exercise-grid" id="exerciseGrid"></div>
+
+<p class="gesture-info">
+✋ Mueve la mano<br>
+⏱ Mantén 2s para seleccionar
+</p>
+</div>
+
+</div>
+
+<div class="instruction-overlay" id="instructionOverlay">
+<div class="instruction-card">
+<h2 id="exerciseTitle"></h2>
+<img id="exerciseImage">
+<p id="exerciseText"></p>
+<button id="readyBtn">LISTO</button>
+</div>
+</div>
+
+<script src="app.js"></script>
+
+</body>
+</html>

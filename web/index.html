@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detector de Sentadillas Web</title>
+
+    <link rel="stylesheet" href="css/styles.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/pose/pose.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Contador de Sentadillas IA</h1>
+        
+        <div class="controls" id="panelLogin">
+            <input type="text" id="inputNombre" placeholder="Tu nombre (ej. Diego)" style="padding: 10px; font-size: 16px; border-radius: 5px;">
+            <br><br>
+            <button id="btnRegistrar" style="background-color: #2196F3;">1. Registrar mi Rostro</button>
+            <button id="btnIngresar">2. Iniciar Sesión</button>
+            <p id="mensajeEstado">Cargando modelos de IA Facial...</p>
+        </div>
+
+        <div class="video-container">
+            <video id="videoElement" autoplay playsinline></video>
+            
+            <canvas id="canvasElement" width="640" height="480"></canvas>
+        </div>
+    </div>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
