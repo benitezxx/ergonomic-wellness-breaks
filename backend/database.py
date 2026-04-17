@@ -4,5 +4,7 @@ from sqlalchemy.orm import sessionmaker, declarative_base
 DATABASE_URL = "mysql+pymysql://root:1234@localhost/pausas_activas"
 
 engine = create_engine(DATABASE_URL)
+
 SessionLocal = sessionmaker(bind=engine)
+
 Base = declarative_base()

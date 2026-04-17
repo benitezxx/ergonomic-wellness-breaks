@@ -1,6 +1,6 @@
 from sqlalchemy import Column, BigInteger, String, Integer, Float, Text, ForeignKey, JSON, TIMESTAMP
 from sqlalchemy.orm import relationship
-from database import Base
+from backend.database import Base
 
 
 class User(Base):
